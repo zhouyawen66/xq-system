@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnaidun.police.mapper.TbMerchantInfoMapper">
+
+    <!--    kitty_Z 展示商户信息列表-->
+    <select id="selectMerchantInfo" resultType="com.cnaidun.police.entity.TbMerchantInfo">
+        SELECT
+        id,
+        user_id,
+        user_name,
+        merchant_name,
+        merchant_address,
+        merchant_tel,
+        last_login_time,
+        last_login_ip,
+        status,
+        perfect_status
+        FROM
+        tb_merchant_info
+    </select>
+
+    <!--    kitty_Z：通过id查询商户详情-->
+    <select id="selectMerchantInfoById" resultType="com.cnaidun.police.entity.TbMerchantInfo">
+    SELECT
+    merchant_name,
+    merchant_address,
+    merchant_tel,
+    status,
+    do_business_start,
+    do_business_end,
+    remarks
+    from
+    tb_merchant_info
+    WHERE id = #{id,jdbcType=BIGINT}
+    limit 1
+    </select>
+
+    <!--    kitty_z商户信息完善（修改）-->
+    <update id="updateMerchantInfoById" parameterType="com.cnaidun.police.entity.TbMerchantInfo">
+        UPDATE tb_merchant_info
+        <if test="userName != null ">
+            ,user_name = #{userName}
+        </if>
+        <if test="merchantName != null ">
+            ,merchant_name = #{merchantName}
+        </if>
+        <if test="merchantAddress != null">
+            ,merchant_address = #{merchantAddress}
+        </if>
+        <if test="merchantTel != null">
+            ,merchant_tel = #{merchantTel}
+        </if>
+        <if test="status != null ">
+            ,status = #{status}
+        </if>
+        <if test="perfectStatus != null ">
+            ,perfect_status = #{perfectStatus}
+        </if>
+        <if test="doBusinessStart != null ">
+            ,do_business_start = #{doBusinessStart}
+        </if>
+        <if test="doBusinessEnd != null ">
+            ,do_business_end = #{doBusinessEnd}
+        </if>
+        <if test="remarks != null ">
+            ,remarks = #{remarks}
+        </if>
+        <if test="merchantPic != null ">
+            ,merchant_pic = #{merchantPic}
+        </if>
+        WHERE user_id = #{userId}
+
+    </update>
+
+
+</mapper>

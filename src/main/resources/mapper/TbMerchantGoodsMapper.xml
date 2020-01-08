@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnaidun.police.mapper.TbMerchantGoodsMapper">
+
+    <!--    kitty_z:查询商品列表-->
+    <select id="selectMerchantGoods" resultType="com.cnaidun.police.entity.TbMerchantGoods">
+        select
+        id,
+        merchant_id,
+        goods_name,
+        goods_detail,
+        use_gold_bean,
+        status,
+        goods_activity_start,
+        goods_activity_end,
+        goods_pic
+        from
+        tb_merchant_goods
+    </select>
+
+    <!--     kitty_z展示商品详情-->
+    <select id="selectMerchantGoodsById" resultType="com.cnaidun.police.entity.TbMerchantGoods">
+        SELECT
+        id,
+        goods_name,
+        goods_detail,
+        use_gold_bean,
+        status,
+        goods_activity_start,
+        goods_activity_end,
+        goods_pic
+        from
+        tb_merchant_goods
+        WHERE id = #{id,jdbcType=BIGINT}
+        limit 1
+    </select>
+
+    <!--    修改商品信息-->
+    <update id="updateMerchantGoodsById" parameterType="com.cnaidun.police.entity.TbMerchantGoods">
+        UPDATE tb_merchant_goods SET update_time = now()
+        <if test="userName != null ">
+            ,user_name = #{userName}
+        </if>
+        <if test="goodsDetail != null">
+            ,goods_detail = #{goodsDetail}
+        </if>
+        <if test="useGoldBean != null">
+            ,use_gold_bean = #{useGoldBean}
+        </if>
+        <if test="status != null">
+            ,status = #{status}
+        </if>
+        <if test="goodsActivityStart != null ">
+            ,goods_activity_start = #{goodsActivityStart}
+        </if>
+        <if test="goodsActivityEnd != null ">
+            ,goods_activity_end = #{goodsActivityEnd}
+        </if>
+        <if test="merchantPic != null">
+            ,merchant_pic = #{merchantPic}
+        </if>
+        <if test="createTime != null">
+            ,create_time = #{createTime}
+        </if>
+        WHERE goods_id = #{goodsId}
+    </update>
+
+
+    <!--    kitty_Z:新增商品-->
+    <insert id="insertGoods" parameterType="com.cnaidun.police.entity.TbMerchantGoods">
+        INSERT INTO tb_merchant_goods(
+            merchant_id,
+            goods_name,
+            goods_detail,
+            use_gold_bean,
+            status,
+            goods_activity_start,
+            goods_activity_end,
+            goods_pic,
+            create_time,
+            update_time,
+        ) VALUES (
+            #{merchantId},
+            #{goodsName},
+            #{goodsDetail},
+            #{useGoldBean},
+            #{status},
+            #{goodsActivityStart},
+            #{goodsActivityEnd},
+            #{goodsPic},
+            #{createTime},
+            #{updateTime},
+        )
+    </insert>
+</mapper>

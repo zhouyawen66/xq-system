@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnaidun.police.mapper.TbScoreProjectConfigMapper">
+    <insert id="addProjectConfig" parameterType="com.cnaidun.police.dto.ProjectConfigDTO">
+        INSERT INTO tb_score_project_config(project_content,scoring_type,score_add,score_sub,sort,remarks,create_time)
+        VALUES(#{projectContent},#{scoringType},#{scoreAdd},#{scoreSub},#{sort},#{remarks},now())
+    </insert>
+
+    <select id="findProjectConfigList" resultType="com.cnaidun.police.dto.ProjectConfigDTO">
+        SELECT
+            id,
+            project_content projectContent,
+            CASE
+            scoring_type
+            WHEN '1' THEN
+            '常规积分项'
+            WHEN '2' THEN
+            '加分项' ELSE '倡议为民"升级版"'
+            END scoringType,
+            score_add scoreAdd,
+            score_sub scoreSub,
+            sort,
+            CASE
+            status
+            WHEN '1' THEN
+            '正常'
+            ELSE '禁用'
+            END status,
+            create_time createTime
+        FROM
+            tb_score_project_config
+    </select>
+
+    <update id="updateProjectConfig" parameterType="com.cnaidun.police.dto.ProjectConfigDTO">
+        UPDATE tb_score_project_config SET update_time = now()
+        <if test="projectContent != null and projectContent != ''">
+            ,project_content = #{projectContent}
+        </if>
+        <if test="scoringType != null and scoringType != ''">
+            ,scoring_type = #{scoringType}
+        </if>
+        <if test="scoreAdd != null">
+            ,score_add = #{scoreAdd}
+        </if>
+        <if test="scoreSub != null">
+            ,score_sub = #{scoreSub}
+        </if>
+        <if test="sort != null and sort != ''">
+            ,sort = #{sort}
+        </if>
+        <if test="remarks != null and remarks != ''">
+            ,remarks = #{remarks}
+        </if>
+        <if test="status != null and status != ''">
+            ,status = #{status}
+        </if>
+        WHERE id = #{id}
+    </update>
+</mapper>

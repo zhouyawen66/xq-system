@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnaidun.police.mapper.TbMessageMapper">
+
+    <!--    查询消息列表-->
+    <select id="selectMessage" resultType="com.cnaidun.police.entity.TbMessage">
+        SELECT
+        id,
+        user_id,
+        status,
+        content,
+        create_time,
+        update_time,
+        sender,
+        recipient
+        FROM
+        tb_message where `status`='1'
+    </select>
+
+
+    <!--    kitty_Z：通过id查询商pin详情-->
+    <select id="selectMessageById" resultType="com.cnaidun.police.entity.TbMessage">
+    SELECT
+    *
+    from
+    tb_message
+    WHERE id = #{Id,jdbcType=BIGINT}
+    limit 1
+    </select>
+
+    <!--    新增消息列表-->
+    <insert id="insertMessage" parameterType="com.cnaidun.police.entity.TbMessage">
+        INSERT INTO tb_message(
+            user_id,
+            status,
+            content,
+            create_time,
+            update_time,
+        ) VALUES (
+            #{userId},
+            #{status},
+            #{content},
+            #{createTime},
+            #{updateTime},
+        )
+    </insert>
+
+    <!--    修改消息-->
+    <update id="updateMessageById">
+        update tb_message
+        <set>
+            <if test="updated.status != null">
+                status = #{updated.status,jdbcType=CHAR},
+            </if>
+            <if test="updated.content != null">
+                content = #{updated.content,jdbcType=VARCHAR},
+            </if>
+        </set>
+    </update>
+
+    <!--    逻辑删除消息-->
+    <update id="updateMessageBystatus">
+        update tb_message
+        set status='0'
+        where
+        id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--    根据姓名或内容模糊查询-->
+    <select id="selectByName" resultType="com.cnaidun.police.entity.TbMessage">
+        select
+        *
+        from
+        tb_message m
+        <where>
+            <if test="sender!=null">
+                m.sender like concat('%',#{sender,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="recipient!=null">
+                and m.recipient like concat('%',#{recipient,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="content!=null">
+                and m.content like concat('%',#{content,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

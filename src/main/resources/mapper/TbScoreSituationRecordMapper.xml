@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnaidun.police.mapper.TbScoreSituationRecordMapper">
+
+
+    <select id="getTjDataByYearAndMonth" parameterType="java.lang.Integer" resultType="java.util.Map">
+            SELECT
+	          a.community_unit_name AS unitname,
+	          sum( b.score ) AS num
+            FROM
+	          tb_score_situation_record a,
+	          tb_score_record_detail b
+            WHERE
+	          a.id = b.situation_id
+	          AND b.`status` = 1
+	          AND a.YEAR = #{year}
+	          AND a.MONTH IN ( #{monbegin}, #{monend} )
+            GROUP BY
+	          a.community_unit_name
+            ORDER BY
+	          sum( b.score )
+    </select>
+
+    <select id="getAllMonthTjData" resultType="java.util.Map">
+            SELECT
+				a.community_unit_name AS unitname,
+				sum(a.score) as num,
+				a.month
+			FROM
+				tb_score_situation_record a,
+				tb_score_record_detail b
+			WHERE
+				a.id = b.situation_id
+				AND b.`status` = 1
+			GROUP BY
+				a.community_unit_name,a.month
+			ORDER BY a.month
+    </select>
+
+    <select id="getTransationNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+            SELECT
+	          count( DISTINCT user_id ) AS num
+            FROM
+	          tb_transaction_gold_bean
+            WHERE
+	          create_time IN ( #{begin},#{end} )
+    </select>
+
+
+    <select id="selectYjDataByYearAndQuarter" resultType="com.cnaidun.police.dto.HomeDTO">
+        select
+        score,
+        substring(community_unit_name,1,2) as name,
+        case
+        when month in('1' , '2', '3') THEN 'one'
+        when month in('4' , '5', '6') THEN 'two'
+        when month in('7' , '8', '9') THEN 'three'
+        when month in('10' , '11', '12') THEN 'four'
+        end as quarter
+        from
+        tb_score_situation_record
+        <where>
+            <if test="year != null and year != ''">
+                year = #{year}
+            </if>
+        </where>
+    </select>
+    <select id="selectTjDataByMonth" resultType="com.cnaidun.police.dto.MonthDTO">
+        select
+        sum(score) as data,
+        substring(community_unit_name,1,2) as name,
+        month as month
+        from
+        tb_score_situation_record
+        <where>
+            <if test="year != null and year != ''">
+                year = #{year}
+            </if>
+        </where>
+        group by month,name
+        order by month,name
+    </select>
+
+
+    <select id="selectTjDataByMonth2" resultType="com.cnaidun.police.dto.HomeDTO">
+        select
+        sum(score) as score,
+        substring(community_unit_name,1,2) as name,
+          month
+        from
+        tb_score_situation_record
+        <where>
+            <if test="year != null and year != ''">
+                year = #{year}
+            </if>
+        </where>
+        group by month,name
+        order by month
+    </select>
+</mapper>

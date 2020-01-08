@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cnaidun.police.mapper.RoleMapper">
+
+    <select id="allRolesList" resultType="com.cnaidun.police.vo.SysRoleVo">
+        SELECT
+        r.id id,
+        r.role_name roleName,
+        r.descr descr,
+        (case r.status when '1' then '正常' when '0' then '禁用' end ) status
+        FROM sys_role r where r.status='1'
+    </select>
+
+    <select id="queryUsersByRole" parameterType="int" resultType="com.cnaidun.police.vo.SysRoleVo">
+        select s.account account,
+        s.id id,
+        (case s.status when '1' then '正常' when '0' then '禁用' end ) status,
+        r.ip lastIp,
+        DATE_FORMAT(r.create_time,'%Y-%m-%d') lastLoginTime
+        from sys_user s left JOIN request_info r on r.request_user=s.account
+        where s.role_id=#{roleId}
+        GROUP BY s.account
+    </select>
+
+    <delete id="deleteByRoleId" parameterType="java.lang.Integer">
+        DELETE
+        FROM
+            sys_user_role
+        WHERE
+            role_id = #{roleId}
+    </delete>
+
+    <insert id="insertUserRole" parameterType="java.util.List">
+        INSERT INTO sys_user_role(role_id,user_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.roleId},
+            #{item.userId}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="addRole" parameterType="com.cnaidun.police.dto.AddRoleRequestDTO" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO sys_role(role_name,descr)
+        VALUES(#{roleName},#{descr})
+    </insert>
+
+    <update id="updateRole" parameterType="com.cnaidun.police.dto.AddRoleRequestDTO">
+        UPDATE sys_role SET role_name=#{roleName},descr=#{descr}
+        WHERE id=#{id}
+    </update>
+
+
+    <update id="deleteRole" parameterType="java.lang.Integer">
+        UPDATE sys_role SET status='-1'
+        WHERE id=#{id}
+    </update>
+</mapper>
